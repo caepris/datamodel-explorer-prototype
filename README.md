@@ -35,7 +35,7 @@ npm run build      # typecheck and production build
 - **Properties:** properties are defined by the instance's class and its ancestor classes, grouped by category. Edit or reset their values with typed editors (text, multiline source, boolean, number/range, enum, Vector2/Vector3, CFrame, Color3, and instance references). Read-only and computed properties are dimmed.
 - **Customize a class:** press **Customize** in Properties to add, edit, or delete properties for that instance type. Subclasses inherit the customization, existing and future instances update together, and **Restore class** clears that class's overlay.
 - **Attributes:** add, rename, retype, edit, and remove custom per-instance key/value data.
-- **Reset demo** restores the sample place; the walkthrough panel suggests a six-step PM tour.
+- **Reset demo** restores the sample place; the walkthrough panel suggests a seven-step tour.
 
 ## How it maps to the engine
 

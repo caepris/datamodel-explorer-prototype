@@ -17,7 +17,12 @@ const STEPS: { title: string; detail: string }[] = [
   {
     title: 'Edit or customize properties',
     detail:
-      'Edit instance values normally, or press Customize to add, edit, delete, duplicate, and drag fields on the selected class. The plus on a category adds a field in that category immediately. Export downloads a Studio-style snapshot of the selected instance. Duplicate copies a field and its subproperties. Bulk add creates many fields at once. Dragging can reorder a field, move it to another category, or nest it. Class changes update every existing and future instance and flow to subclasses.',
+      'Edit instance values normally, or press Customize to add, edit, delete, duplicate, and drag fields on the selected class. The plus on a category adds a field in that category immediately. Duplicate copies a field and its subproperties. Bulk add creates many fields at once. Dragging can reorder a field, move it to another category, or nest it. Class changes update every existing and future instance and flow to subclasses.',
+  },
+  {
+    title: 'Export a snapshot',
+    detail:
+      'In Explorer, Export with nothing selected downloads the whole DataModel in the Studio layout. Select an instance, then Export downloads only that instance and every descendant, fully expanded, without the search bar or title. Click empty space in the tree or press Escape to clear the selection. In Properties, Export downloads a Studio-style snapshot of the selected instance. Copy image puts either snapshot on the clipboard instead of saving a file.',
   },
   {
     title: 'Add and remove attributes',

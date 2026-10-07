@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { buildStudioExplorerRows, studioExplorerTitle } from '../../model/studioExplorerSnapshot'
 import { useDataModel } from '../../state/useDataModel'
+import { SnapshotExportActions } from '../SnapshotExportActions'
 import { Modal } from '../Modal'
 import { EXPLORER_SNAPSHOT_SCALE, renderStudioExplorerSnapshot } from './studioExplorerCanvas'
 
@@ -52,14 +53,7 @@ export function StudioExplorerExportDialog({ onClose }: { onClose: () => void })
           <p className="empty-hint">Preparing snapshot…</p>
         )}
       </div>
-      <div className="property-export-actions">
-        <button type="button" className="button" onClick={onClose}>
-          Close
-        </button>
-        <button type="button" className="button button-primary" disabled={!imageUrl} onClick={download}>
-          Download PNG
-        </button>
-      </div>
+      <SnapshotExportActions imageUrl={imageUrl} onClose={onClose} onDownload={download} />
     </Modal>
   )
 }

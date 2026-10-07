@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { buildStudioPropertyRows, studioPropertyTitle } from '../../model/studioPropertySnapshot'
 import type { InstanceNode } from '../../model/types'
 import { useDataModel } from '../../state/useDataModel'
+import { SnapshotExportActions } from '../SnapshotExportActions'
 import { Modal } from '../Modal'
 import { renderStudioPropertySnapshot } from './studioPropertyCanvas'
 
@@ -26,14 +27,7 @@ export function StudioPropertyExportDialog({ node, onClose }: { node: InstanceNo
       <div className="property-export-frame">
         <img className="property-export-preview" alt={title} src={imageUrl} />
       </div>
-      <div className="property-export-actions">
-        <button type="button" className="button" onClick={onClose}>
-          Close
-        </button>
-        <button type="button" className="button button-primary" onClick={download}>
-          Download PNG
-        </button>
-      </div>
+      <SnapshotExportActions imageUrl={imageUrl} onClose={onClose} onDownload={download} />
     </Modal>
   )
 }
