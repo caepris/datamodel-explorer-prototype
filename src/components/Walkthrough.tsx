@@ -17,7 +17,7 @@ const STEPS: { title: string; detail: string }[] = [
   {
     title: 'Edit or customize properties',
     detail:
-      'Edit instance values normally, or press Customize to add, edit, delete, duplicate, and drag fields on the selected class. Export downloads a Studio-style snapshot of the selected instance. Duplicate copies a field and its subproperties. Bulk add creates many fields at once. Dragging can reorder a field, move it to another category, or nest it. Class changes update every existing and future instance and flow to subclasses.',
+      'Edit instance values normally, or press Customize to add, edit, delete, duplicate, and drag fields on the selected class. The plus on a category adds a field in that category immediately. Export downloads a Studio-style snapshot of the selected instance. Duplicate copies a field and its subproperties. Bulk add creates many fields at once. Dragging can reorder a field, move it to another category, or nest it. Class changes update every existing and future instance and flow to subclasses.',
   },
   {
     title: 'Add and remove attributes',
@@ -35,7 +35,7 @@ export function Walkthrough({ onClose }: { onClose: () => void }) {
   return (
     <aside className="walkthrough" aria-label="Walkthrough">
       <header className="panel-header">
-        <h2>PM walkthrough</h2>
+        <h2>Walkthrough</h2>
         <button type="button" className="icon-button" aria-label="Close walkthrough" onClick={onClose}>
           ×
         </button>

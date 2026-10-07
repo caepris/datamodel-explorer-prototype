@@ -7,6 +7,7 @@ import { useDataModel } from '../../state/useDataModel'
 import { ConfirmDeleteDialog } from './ConfirmDeleteDialog'
 import { ExplorerRow } from './ExplorerRow'
 import { InsertObjectDialog } from './InsertObjectDialog'
+import { StudioExplorerExportDialog } from './StudioExplorerExportDialog'
 
 export interface VisibleRow {
   id: InstanceId
@@ -52,6 +53,7 @@ export function ExplorerPanel() {
   const [deleteId, setDeleteId] = useState<InstanceId | null>(null)
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null)
   const [dragId, setDragId] = useState<InstanceId | null>(null)
+  const [exporting, setExporting] = useState(false)
   const treeRef = useRef<HTMLDivElement>(null)
 
   const rows = useMemo(() => computeVisibleRows(state, filter), [state, filter])
@@ -103,6 +105,8 @@ export function ExplorerPanel() {
       } else if (selected.parentId) {
         dispatch({ type: 'select', id: selected.parentId })
       }
+    } else if (event.key === 'Escape') {
+      dispatch({ type: 'select', id: null })
     } else if (event.key === 'F2' && selected) {
       event.preventDefault()
       setRenamingId(selected.id)
@@ -127,15 +131,20 @@ export function ExplorerPanel() {
     <section className="panel explorer-panel" aria-label="Explorer">
       <header className="panel-header">
         <h2>Explorer</h2>
-        <button
-          type="button"
-          className="icon-button"
-          title="Insert Object (Ctrl+I)"
-          aria-label="Insert Object"
-          onClick={() => setInsertParentId(getInsertParent(state, state.selectedId))}
-        >
-          +
-        </button>
+        <div className="panel-header-actions">
+          <button type="button" className="button panel-header-button" onClick={() => setExporting(true)}>
+            Export
+          </button>
+          <button
+            type="button"
+            className="icon-button"
+            title="Insert Object (Ctrl+I)"
+            aria-label="Insert Object"
+            onClick={() => setInsertParentId(getInsertParent(state, state.selectedId))}
+          >
+            +
+          </button>
+        </div>
       </header>
       <div className="panel-toolbar">
         <input
@@ -153,6 +162,9 @@ export function ExplorerPanel() {
         aria-label="DataModel tree"
         tabIndex={0}
         onKeyDown={onTreeKeyDown}
+        onClick={(event) => {
+          if (event.target === event.currentTarget) dispatch({ type: 'select', id: null })
+        }}
       >
         {rows.map((row) => (
           <ExplorerRow
@@ -221,6 +233,7 @@ export function ExplorerPanel() {
 
       {insertParentId && <InsertObjectDialog parentId={insertParentId} onClose={() => setInsertParentId(null)} />}
       {deleteId && <ConfirmDeleteDialog id={deleteId} onClose={() => setDeleteId(null)} />}
+      {exporting && <StudioExplorerExportDialog onClose={() => setExporting(false)} />}
     </section>
   )
 }

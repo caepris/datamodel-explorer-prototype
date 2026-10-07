@@ -192,13 +192,27 @@ describe('Explorer and Properties', () => {
     expect(within(panel).getByRole('textbox', { name: 'RetryCount' })).toBeDisabled()
   })
 
+  it('adds a property into a category from the category plus button', async () => {
+    const { user } = renderApp()
+    const panel = properties()
+    await user.click(within(panel).getByRole('button', { name: 'Customize' }))
+    const appearance = within(panel).getByRole('region', { name: 'Appearance properties' })
+    await user.click(within(appearance).getByRole('button', { expanded: true }))
+    await user.click(within(appearance).getByRole('button', { name: 'Add property to Appearance' }))
+    expect(within(appearance).getByRole('textbox', { name: 'Property' })).toHaveValue('')
+    expect(within(within(panel).getByRole('region', { name: 'Data properties' })).queryByRole('textbox', { name: 'Property' })).toBeNull()
+
+    await user.click(within(appearance).getByRole('button', { name: 'Add property to Appearance' }))
+    expect(within(appearance).getByRole('textbox', { name: 'Property2' })).toHaveValue('')
+  })
+
   it('customizes the property panel for an instance class', async () => {
     const { user } = renderApp()
     const panel = properties()
     await user.click(within(panel).getByRole('button', { name: 'Customize' }))
     expect(within(panel).getByText('Editing Part')).toBeInTheDocument()
 
-    await user.click(within(panel).getByRole('button', { name: /Add property/ }))
+    await user.click(within(panel).getByRole('button', { name: '+ Add property' }))
     const dialog = screen.getByRole('dialog', { name: 'Add Part property' })
     await user.type(within(dialog).getByRole('textbox', { name: 'Property name' }), 'LaunchState')
     await user.selectOptions(within(dialog).getByRole('combobox', { name: 'Property type' }), 'enum')

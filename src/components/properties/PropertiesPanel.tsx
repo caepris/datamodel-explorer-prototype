@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react'
-import { CATEGORY_ORDER, getClass, getClassChain, getVisibleProperties } from '../../model/classCatalog'
+import { CATEGORY_ORDER, getAllProperties, getClass, getClassChain, getVisibleProperties } from '../../model/classCatalog'
 import { normalizePropertyPath, propertyKey } from '../../model/propertyTree'
 import { getFullName } from '../../model/tree'
 import type { PropertySchema } from '../../model/types'
+import { defaultVariant } from '../../model/variants'
 import { useDataModel } from '../../state/useDataModel'
 import { ClassGlyph } from '../ClassGlyph'
 import { AttributesSection } from './AttributesSection'
@@ -10,6 +11,18 @@ import { PropertyRow } from './PropertyRow'
 import { BulkPropertyDialog } from './BulkPropertyDialog'
 import { PropertySchemaDialog } from './PropertySchemaDialog'
 import { StudioPropertyExportDialog } from './StudioPropertyExportDialog'
+
+function nextCategoryPropertyName(existingNames: string[]): string {
+  const taken = new Set(existingNames)
+  if (!taken.has('Property')) return 'Property'
+  let n = 2
+  let candidate = `Property${n}`
+  while (taken.has(candidate)) {
+    n += 1
+    candidate = `Property${n}`
+  }
+  return candidate
+}
 
 function groupByCategory(properties: PropertySchema[]): [string, PropertySchema[]][] {
   const groups = new Map<string, PropertySchema[]>()
@@ -169,6 +182,31 @@ export function PropertiesPanel() {
                       {category}
                       <span className="category-count">{props.length}</span>
                     </button>
+                    {customize && (
+                      <button
+                        type="button"
+                        className="icon-button category-add"
+                        aria-label={`Add property to ${category}`}
+                        title={`Add a property to ${category}`}
+                        onClick={() => {
+                          const names = getAllProperties(node.className, state.classOverlays).map((property) => property.name)
+                          dispatch({
+                            type: 'addClassProperty',
+                            className: node.className,
+                            property: {
+                              name: nextCategoryPropertyName(names),
+                              category,
+                              type: 'string',
+                              defaultValue: defaultVariant('string'),
+                            },
+                          })
+                          setFilter('')
+                          setCollapsed((current) => ({ ...current, [category]: false }))
+                        }}
+                      >
+                        +
+                      </button>
+                    )}
                   </header>
                   {!isCollapsed && (
                     <div className="category-body">
