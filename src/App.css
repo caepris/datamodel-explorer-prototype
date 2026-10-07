@@ -387,7 +387,8 @@
   background: #17191f;
 }
 .explorer-export-preview {
-  width: min(340px, 100%);
+  width: auto;
+  max-width: 100%;
 }
 .property-export-actions {
   display: flex;

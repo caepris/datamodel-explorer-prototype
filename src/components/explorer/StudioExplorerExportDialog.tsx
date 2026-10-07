@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { buildStudioExplorerRows, studioExplorerTitle } from '../../model/studioExplorerSnapshot'
 import { useDataModel } from '../../state/useDataModel'
 import { Modal } from '../Modal'
-import { renderStudioExplorerSnapshot } from './studioExplorerCanvas'
+import { EXPLORER_SNAPSHOT_SCALE, renderStudioExplorerSnapshot } from './studioExplorerCanvas'
 
 export function StudioExplorerExportDialog({ onClose }: { onClose: () => void }) {
   const { state } = useDataModel()
@@ -11,16 +11,19 @@ export function StudioExplorerExportDialog({ onClose }: { onClose: () => void })
   const rows = useMemo(() => buildStudioExplorerRows(state, selectedId), [state, selectedId])
   const title = studioExplorerTitle(selectedId)
   const [imageUrl, setImageUrl] = useState('')
+  const [imageWidth, setImageWidth] = useState(0)
 
   useEffect(() => {
     let active = true
-    void renderStudioExplorerSnapshot(title, rows).then((canvas) => {
-      if (active) setImageUrl(canvas.toDataURL('image/png'))
+    void renderStudioExplorerSnapshot(rows, selected ? {} : { title }).then((canvas) => {
+      if (!active) return
+      setImageUrl(canvas.toDataURL('image/png'))
+      setImageWidth(canvas.width / EXPLORER_SNAPSHOT_SCALE)
     })
     return () => {
       active = false
     }
-  }, [rows, title])
+  }, [rows, selected, title])
 
   const download = () => {
     if (!imageUrl) return
@@ -34,12 +37,17 @@ export function StudioExplorerExportDialog({ onClose }: { onClose: () => void })
     <Modal title="Export Explorer" onClose={onClose}>
       <p className="dialog-subtitle">
         {selected
-          ? `Studio-style snapshot of ${selected.name} and all its descendants.`
+          ? `Fully expanded snapshot of ${selected.name} and all its descendants.`
           : 'Studio-style snapshot of the entire DataModel.'}
       </p>
       <div className="property-export-frame explorer-export-frame">
         {imageUrl ? (
-          <img className="property-export-preview explorer-export-preview" alt={title} src={imageUrl} />
+          <img
+            className="property-export-preview explorer-export-preview"
+            alt={title}
+            src={imageUrl}
+            style={{ width: imageWidth }}
+          />
         ) : (
           <p className="empty-hint">Preparing snapshot…</p>
         )}

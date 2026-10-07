@@ -6,16 +6,20 @@ const WIDTH = 340
 const HEADER = 30
 const SEARCH = 28
 const ROW = 22
-const SCALE = 2
+export const EXPLORER_SNAPSHOT_SCALE = 2
+const SCALE = EXPLORER_SNAPSHOT_SCALE
 const ICON_SIZE = 16
 
 export async function renderStudioExplorerSnapshot(
-  title: string,
   rows: StudioExplorerRow[],
+  options: { title?: string } = {},
 ): Promise<HTMLCanvasElement> {
-  const height = HEADER + SEARCH + rows.length * ROW + 6
+  const chrome = Boolean(options.title)
+  const top = chrome ? HEADER + SEARCH : 4
+  const height = top + rows.length * ROW + 4
+  const width = chrome ? WIDTH : selectionWidth(rows)
   const canvas = document.createElement('canvas')
-  canvas.width = WIDTH * SCALE
+  canvas.width = width * SCALE
   canvas.height = height * SCALE
   const ctx = canvas.getContext('2d')
   if (!ctx) return canvas
@@ -24,12 +28,14 @@ export async function renderStudioExplorerSnapshot(
   ctx.scale(SCALE, SCALE)
   ctx.textBaseline = 'middle'
   ctx.fillStyle = '#17191f'
-  ctx.fillRect(0, 0, WIDTH, height)
+  ctx.fillRect(0, 0, width, height)
 
-  drawHeader(ctx, title)
-  drawSearch(ctx)
+  if (options.title) {
+    drawHeader(ctx, options.title)
+    drawSearch(ctx)
+  }
 
-  let y = HEADER + SEARCH
+  let y = top
   for (const row of rows) {
     drawGuideLines(ctx, row.depth, y)
     const indent = 8 + row.depth * 18
@@ -39,13 +45,24 @@ export async function renderStudioExplorerSnapshot(
     ctx.drawImage(icons, sourceX, 0, ICON_SIZE, ICON_SIZE, iconX, y + 3, ICON_SIZE, ICON_SIZE)
     ctx.fillStyle = '#d5d7de'
     ctx.font = '13px Inter, "Segoe UI", sans-serif'
-    ctx.fillText(fitText(ctx, row.name, WIDTH - iconX - 31), iconX + 21, y + ROW / 2)
+    ctx.fillText(fitText(ctx, row.name, width - iconX - 16), iconX + 21, y + ROW / 2)
     y += ROW
   }
 
   ctx.strokeStyle = '#0d0f13'
-  ctx.strokeRect(0.5, 0.5, WIDTH - 1, height - 1)
+  ctx.strokeRect(0.5, 0.5, width - 1, height - 1)
   return canvas
+}
+
+function selectionWidth(rows: StudioExplorerRow[]): number {
+  const measure = document.createElement('canvas').getContext('2d')
+  if (!measure) return WIDTH
+  measure.font = '13px Inter, "Segoe UI", sans-serif'
+  const widest = rows.reduce((max, row) => {
+    const indent = 8 + row.depth * 18
+    return Math.max(max, indent + 50 + measure.measureText(row.name).width)
+  }, 96)
+  return Math.ceil(widest + 12)
 }
 
 function drawHeader(ctx: CanvasRenderingContext2D, title: string) {
